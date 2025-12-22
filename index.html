@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRDM Pneumonia Surveillance Epi Calendar</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="title">
+      <h1>CRDM Pneumonia Surveillance Epi Calendar</h1>
+      <div id="subTitle" class="subtitle"></div>
+    </div>
+
+    <div class="controls">
+      <button id="prevBtn" type="button" aria-label="Previous month">◀</button>
+      <button id="todayBtn" type="button">Today</button>
+      <button id="nextBtn" type="button" aria-label="Next month">▶</button>
+
+      <select id="yearSelect" aria-label="Select year"></select>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="monthHeader">
+      <h2 id="monthLabel"></h2>
+    </div>
+
+    <div class="dow" aria-hidden="true">
+      <div>Fri</div><div>Sat</div><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div>
+    </div>
+
+    <div id="grid" class="grid" aria-label="Calendar grid"></div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalBackdrop" class="backdrop hidden" role="dialog" aria-modal="true" aria-label="Reminder message">
+    <div class="modal">
+      <h3 id="modalTitle">Reminder</h3>
+      <p id="modalText"></p>
+      <div class="modalActions">
+        <button id="modalCloseBtn" type="button">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
