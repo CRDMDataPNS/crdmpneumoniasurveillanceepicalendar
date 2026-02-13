@@ -17,33 +17,34 @@ function colIndexFriFirst(date){
   // Friday should be column 0, Thursday column 6
   return (date.getDay() - FRIDAY + 7) % 7;
 }
-function firstFridayOfYear(year){
-  const jan1 = new Date(year, 0, 1);
-  const offset = (FRIDAY - jan1.getDay() + 7) % 7;
-  return addDays(jan1, offset);
-}
 
-/**
- * Epi week rules:
- * - Weeks start on Friday and end on Thursday.
- * - Week 1 begins on the first Friday on/after 1 Jan.
- * - If 1 Jan is not a Friday, the days before the first Friday belong to the last week of the previous epi year.
- * - Some epi years may have Week 53 (allowed).
- */
+// Anchor: 6–12 February 2026 is Epi Week 7
+const EPI_ANCHOR_START = new Date(2026, 1, 6); // 6 Feb 2026 (Friday)
+const EPI_ANCHOR_YEAR = 2026;
+const EPI_ANCHOR_WEEK = 7;
+
 function epiInfo(date){
   const d = startOfDay(date);
-  let epiYear = d.getFullYear();
-  let firstFri = firstFridayOfYear(epiYear);
 
-  if (d < firstFri){
-    epiYear -= 1;
-    firstFri = firstFridayOfYear(epiYear);
+  const diffDays = Math.floor((d - EPI_ANCHOR_START) / MS_DAY);
+  const weekOffset = Math.floor(diffDays / 7);
+
+  let epiWeek = EPI_ANCHOR_WEEK + weekOffset;
+  let epiYear = EPI_ANCHOR_YEAR;
+
+  // Adjust forward across years
+  while (epiWeek > 53){
+    epiWeek -= 53;
+    epiYear += 1;
   }
 
-  const diffDays = Math.floor((d - firstFri) / MS_DAY);
-  const epiWeek = Math.floor(diffDays / 7) + 1;
+  // Adjust backward across years
+  while (epiWeek < 1){
+    epiYear -= 1;
+    epiWeek += 53;
+  }
 
-  const weekStart = addDays(firstFri, (epiWeek - 1) * 7);
+  const weekStart = addDays(EPI_ANCHOR_START, weekOffset * 7);
   const weekEnd = addDays(weekStart, 6); // Thu
 
   return { epiYear, epiWeek, weekStart, weekEnd };
@@ -134,7 +135,6 @@ function render(){
     top.appendChild(dateNum);
     top.appendChild(weekBadge);
 
-    // Visual hint for Thursdays (end of epi week)
     if (d.getDay() === 4){ // Thu
       const endBadge = document.createElement("div");
       endBadge.className = "badge end";
@@ -169,14 +169,14 @@ yearSelect.addEventListener("change", () => {
   setViewToMonth(y, viewDate.getMonth());
 });
 
-// Friday/Thursday popups (shown when the page is opened)
+// Friday/Thursday popups
 function showPopupIfNeeded(){
   const d = startOfDay(new Date());
   const epi = epiInfo(d);
 
-  if (d.getDay() === 5){ // Friday
+  if (d.getDay() === 5){
     openModal(`Happy Friday!! Today is the beginning of week ${epi.epiWeek} of the year! Please check and resolve any outstanding queries.`);
-  } else if (d.getDay() === 4){ // Thursday
+  } else if (d.getDay() === 4){
     openModal(`Today is the last day of week ${epi.epiWeek}. Please make sure that all queries for the week are resolved and that all enrolled cases for the week, that are fully completed, are marked as complete. Please also make sure that all admissions and enrollments are entered on REDCap.`);
   }
 }
@@ -184,5 +184,4 @@ function showPopupIfNeeded(){
 // Init
 populateYearSelect(2026, 2027);
 render();
-
 showPopupIfNeeded();
