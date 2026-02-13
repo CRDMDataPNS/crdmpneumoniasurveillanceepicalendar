@@ -14,14 +14,13 @@ function sameDay(a,b){
   return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
 }
 function colIndexFriFirst(date){
-  // Friday should be column 0, Thursday column 6
   return (date.getDay() - FRIDAY + 7) % 7;
 }
 
-// Anchor: 6–12 February 2026 is Epi Week 7
-const EPI_ANCHOR_START = new Date(2026, 1, 6); // 6 Feb 2026 (Friday)
+// Anchor: 13–19 February 2026 is Epi Week 8
+const EPI_ANCHOR_START = new Date(2026, 1, 13); // 13 Feb 2026 (Friday)
 const EPI_ANCHOR_YEAR = 2026;
-const EPI_ANCHOR_WEEK = 7;
+const EPI_ANCHOR_WEEK = 8;
 
 function epiInfo(date){
   const d = startOfDay(date);
@@ -32,26 +31,24 @@ function epiInfo(date){
   let epiWeek = EPI_ANCHOR_WEEK + weekOffset;
   let epiYear = EPI_ANCHOR_YEAR;
 
-  // Adjust forward across years
   while (epiWeek > 53){
     epiWeek -= 53;
     epiYear += 1;
   }
 
-  // Adjust backward across years
   while (epiWeek < 1){
     epiYear -= 1;
     epiWeek += 53;
   }
 
   const weekStart = addDays(EPI_ANCHOR_START, weekOffset * 7);
-  const weekEnd = addDays(weekStart, 6); // Thu
+  const weekEnd = addDays(weekStart, 6);
 
   return { epiYear, epiWeek, weekStart, weekEnd };
 }
 
 // --- UI state ---
-let viewDate = startOfDay(new Date()); // month we are viewing
+let viewDate = startOfDay(new Date());
 
 const gridEl = document.getElementById("grid");
 const monthLabelEl = document.getElementById("monthLabel");
@@ -77,7 +74,6 @@ function closeModal(){
 modalCloseBtn.addEventListener("click", closeModal);
 backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
 
-// Populate years (default: 2026–2027; you can extend anytime)
 function populateYearSelect(startYear=2026, endYear=2027){
   yearSelect.innerHTML = "";
   for(let y = startYear; y <= endYear; y++){
@@ -107,10 +103,8 @@ function render(){
 
   yearSelect.value = String(y);
 
-  // Find first visible cell (start grid on a Friday)
   const start = addDays(firstOfMonth, -colIndexFriFirst(firstOfMonth));
 
-  // Build 6 weeks (42 cells)
   gridEl.innerHTML = "";
   for(let i=0; i<42; i++){
     const d = addDays(start, i);
@@ -135,7 +129,7 @@ function render(){
     top.appendChild(dateNum);
     top.appendChild(weekBadge);
 
-    if (d.getDay() === 4){ // Thu
+    if (d.getDay() === 4){
       const endBadge = document.createElement("div");
       endBadge.className = "badge end";
       endBadge.textContent = "End";
@@ -153,7 +147,6 @@ function render(){
   }
 }
 
-// Navigation
 prevBtn.addEventListener("click", () => {
   setViewToMonth(viewDate.getFullYear(), viewDate.getMonth() - 1);
 });
@@ -169,7 +162,6 @@ yearSelect.addEventListener("change", () => {
   setViewToMonth(y, viewDate.getMonth());
 });
 
-// Friday/Thursday popups
 function showPopupIfNeeded(){
   const d = startOfDay(new Date());
   const epi = epiInfo(d);
@@ -181,7 +173,6 @@ function showPopupIfNeeded(){
   }
 }
 
-// Init
 populateYearSelect(2026, 2027);
 render();
 showPopupIfNeeded();
