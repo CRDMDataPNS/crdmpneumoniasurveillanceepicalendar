@@ -74,7 +74,7 @@ function closeModal(){
 modalCloseBtn.addEventListener("click", closeModal);
 backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
 
-function populateYearSelect(startYear=2026, endYear=2027){
+function populateYearSelect(startYear=2025, endYear=2027){
   yearSelect.innerHTML = "";
   for(let y = startYear; y <= endYear; y++){
     const opt = document.createElement("option");
@@ -176,3 +176,4 @@ function showPopupIfNeeded(){
 populateYearSelect(2026, 2027);
 render();
 showPopupIfNeeded();
+
