@@ -174,26 +174,13 @@ function showPopupIfNeeded(){
 }
 
 populateYearSelect(2025, 2027);
-render();
+setViewToMonth(viewDate.getFullYear(), viewDate.getMonth());
 showPopupIfNeeded();
 
-You said:
-This new updated code will show 2025, 2026 and 2027?
 
-ChatGPT said:
-Yes 👍🏽 — this updated version will show:
 
-2025
 
-2026
 
-2027
-
-Because this line now reads:
-
-populateYearSelect(2025, 2027);
-render();
-showPopupIfNeeded();
 
 
 
