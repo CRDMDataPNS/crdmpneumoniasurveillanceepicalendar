@@ -48,10 +48,6 @@ function epiInfo(date){
   };
 }
 
-function isThursday(date){
-  return (date.getDay() || 7) === 4;
-}
-
 function formatDate(date){
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
@@ -62,34 +58,6 @@ function formatLongDate(date){
 
 function formatMonthLabel(date){
   return date.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
-}
-
-function getReportingThursdayForWeek(date){
-  return addDays(getStartOfISOWeek(date), 3);
-}
-
-function admissionsReportingInfo(reportingDate){
-  const reportThursday = startOfDay(reportingDate);
-  const reportWeekStart = getStartOfISOWeek(reportThursday);
-  const admissionsWeekStart = addDays(reportWeekStart, -7);
-  const admissionsWeekEnd = addDays(reportWeekStart, -1);
-  const admissionsEpi = epiInfo(admissionsWeekStart);
-  const reportEpi = epiInfo(reportThursday);
-
-  return {
-    reportThursday,
-    reportEpiYear: reportEpi.epiYear,
-    reportEpiWeek: reportEpi.epiWeek,
-    admissionsWeekStart,
-    admissionsWeekEnd,
-    admissionsEpiYear: admissionsEpi.epiYear,
-    admissionsEpiWeek: admissionsEpi.epiWeek
-  };
-}
-
-function admissionsReportingMessage(reportingDate){
-  const info = admissionsReportingInfo(reportingDate);
-  return `Admissions reporting day: ${formatLongDate(info.reportThursday)}<br><br>Currently in week ${info.reportEpiWeek}, admissions for week ${info.admissionsEpiWeek} are due.<br><br>Please enter admissions for Site Week ${info.admissionsEpiWeek} of Site Year ${info.admissionsEpiYear}.<br>Admission week runs ${formatDate(info.admissionsWeekStart)} to ${formatDate(info.admissionsWeekEnd)}.`;
 }
 
 let viewDate = startOfDay(new Date());
@@ -139,11 +107,9 @@ function setViewToMonth(year, monthIndex){
 function render(){
   const today = startOfDay(new Date());
   const infoToday = epiInfo(today);
-  const currentReportingThursday = getReportingThursdayForWeek(today);
-  const currentReporting = admissionsReportingInfo(currentReportingThursday);
 
   subTitleEl.textContent =
-    `Today: Site Week ${infoToday.epiWeek} (Site Year ${infoToday.epiYear}) • Week runs ${formatDate(infoToday.weekStart)} → ${formatDate(infoToday.weekEnd)} • Current reporting Thursday: ${formatDate(currentReporting.reportThursday)} for Week ${currentReporting.admissionsEpiWeek}`;
+    `Today: Site Week ${infoToday.epiWeek} (Site Year ${infoToday.epiYear}) • Week runs ${formatDate(infoToday.weekStart)} → ${formatDate(infoToday.weekEnd)}`;
 
   const y = viewDate.getFullYear();
   const m = viewDate.getMonth();
@@ -160,7 +126,6 @@ function render(){
     const d = addDays(start, i);
     const inMonth = d.getMonth() === m;
     const epi = epiInfo(d);
-    const isCurrentReportingThursday = sameDay(d, currentReportingThursday);
 
     const cell = document.createElement("div");
     cell.className = "day" + (inMonth ? "" : " muted") + (sameDay(d, today) ? " today" : "");
@@ -193,40 +158,6 @@ function render(){
     cell.appendChild(top);
     cell.appendChild(meta);
 
-    if (isThursday(d)){
-      const reporting = admissionsReportingInfo(d);
-
-      const admissionsBadge = document.createElement("button");
-      admissionsBadge.type = "button";
-      admissionsBadge.className = "badge admissions";
-      admissionsBadge.textContent = "Admissions for previous week";
-
-      admissionsBadge.addEventListener("click", (e) => {
-        e.stopPropagation();
-        openModal(admissionsReportingMessage(d));
-      });
-
-      const admissionsText = document.createElement("div");
-      admissionsText.className = "reportingText";
-      admissionsText.textContent = `Currently in week ${reporting.reportEpiWeek}, admissions for week ${reporting.admissionsEpiWeek} due.`;
-
-      cell.style.cursor = "pointer";
-      cell.title = `Enter admissions for Week ${reporting.admissionsEpiWeek} (${formatDate(reporting.admissionsWeekStart)} to ${formatDate(reporting.admissionsWeekEnd)}) on ${formatDate(reporting.reportThursday)}`;
-      cell.addEventListener("click", () => {
-        openModal(admissionsReportingMessage(d));
-      });
-
-      cell.appendChild(admissionsBadge);
-      cell.appendChild(admissionsText);
-
-      if (isCurrentReportingThursday){
-        const currentBadge = document.createElement("div");
-        currentBadge.className = "badge current-reporting";
-        currentBadge.textContent = "Current reporting week";
-        cell.appendChild(currentBadge);
-      }
-    }
-
     gridEl.appendChild(cell);
   }
 }
@@ -256,8 +187,6 @@ function showPopupIfNeeded(){
 
   if (dow === 1){
     openModal(`Happy Monday!! Today is the beginning of week ${epi.epiWeek} of the year! Please check and resolve any outstanding queries.`);
-  } else if (dow === 4){
-    openModal(admissionsReportingMessage(d));
   } else if (dow === 7){
     openModal(`Today is the last day of week ${epi.epiWeek}. Please make sure that all queries for the week are resolved and that all enrolled cases for the week, that are fully completed, are marked as complete. Please also make sure that all admissions and enrollments are entered on REDCap.`);
   }
@@ -266,7 +195,6 @@ function showPopupIfNeeded(){
 populateYearSelect(2023, 2027);
 setViewToMonth(viewDate.getFullYear(), viewDate.getMonth());
 showPopupIfNeeded();
-
 
 
 
