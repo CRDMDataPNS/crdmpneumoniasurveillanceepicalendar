@@ -9,14 +9,6 @@
   --danger:#ff5a7a;
   --line:rgba(255,255,255,0.10);
   --line-strong:rgba(255,255,255,0.18);
-  --report-bg:#ede9fe;
-  --report-border:#c4b5fd;
-  --report-text:#5b21b6;
-  --current-bg:#2563eb;
-  --current-border:#93c5fd;
-  --current-text:#ffffff;
-  --week-highlight:#eff6ff;
-  --week-border:#bfdbfe;
 }
 
 *{
@@ -150,17 +142,6 @@ select:hover{
   outline:2px solid var(--accent);
 }
 
-.day.reporting-week{
-  background:var(--week-highlight);
-  border:2px solid var(--week-border);
-}
-
-.day.reporting-thursday{
-  background:#dbeafe;
-  border:2px solid var(--accent-strong);
-  box-shadow:0 0 0 2px rgba(37,99,235,0.12) inset;
-}
-
 .day .topRow{
   display:flex;
   align-items:flex-start;
@@ -201,50 +182,10 @@ button.badge{
   border-color:rgba(255,90,122,0.25);
 }
 
-.badge.admissions{
-  display:inline-flex;
-  align-self:flex-start;
-  background:var(--report-bg);
-  border-color:var(--report-border);
-  color:var(--report-text);
-  font-size:11px;
-  font-weight:700;
-  line-height:1.2;
-  white-space:normal;
-  text-align:left;
-  max-width:100%;
-}
-
-.badge.current-reporting{
-  display:inline-flex;
-  align-self:flex-start;
-  background:var(--current-bg);
-  border-color:var(--current-border);
-  color:var(--current-text);
-  font-size:11px;
-  font-weight:700;
-  line-height:1.2;
-  white-space:normal;
-  text-align:left;
-  max-width:100%;
-}
-
 .day .meta{
   font-size:12px;
   color:var(--muted);
   line-height:1.35;
-}
-
-.day .reportingText{
-  margin-top:2px;
-  font-size:11px;
-  line-height:1.4;
-  color:var(--muted);
-  font-weight:600;
-}
-
-.day.reporting-thursday .reportingText{
-  color:var(--accent-strong);
 }
 
 .backdrop{
@@ -316,17 +257,8 @@ button.badge{
     padding:3px 7px;
   }
 
-  .badge.admissions,
-  .badge.current-reporting{
-    font-size:10px;
-  }
-
   .day .meta{
     font-size:11px;
-  }
-
-  .day .reportingText{
-    font-size:10px;
   }
 
   .dow,
